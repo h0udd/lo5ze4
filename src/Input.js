@@ -8,6 +8,7 @@ export const DOWN = "DOWN";
 export class Input {
     constructor() {
         this.heldDirections = [];
+        this.spaceAction =() => {console.log("space!")};
 
         document.addEventListener("keydown", (e) => {
             if (e.code === "ArrowUp" || e.code === "KeyW") {
@@ -31,6 +32,9 @@ export class Input {
              //console.log("EEEE");
              events.emit("CHANGE_LEVEL_REQUESTED",{name :"underground"});
              }
+              if (e.code === "Space") {
+              this.spaceAction();             
+             }
         });
 
         document.addEventListener("keyup", (e) => {
@@ -46,6 +50,7 @@ export class Input {
             if (e.code === "ArrowRight" || e.code === "KeyD") {
                 this.onArrowReleased(RIGHT);
             }
+
         });
     }
 

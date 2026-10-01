@@ -1,5 +1,4 @@
-import { Vector2 } from "./Vector2.js";
-
+import { Vector2 } from './vector2.js';
 export class Mouse {
   constructor(canvas) {
     this.position = new Vector2(0, 0);

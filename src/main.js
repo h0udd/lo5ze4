@@ -1,14 +1,9 @@
 import { resources } from './resource';
 import { Sprite } from './spritet';
-import { Vector2 } from './vector2';
 import { GameLoop } from './GameLoop';
-import { Input, UP, DOWN, LEFT, RIGHT } from './Input.js';
+import { Input } from './Input.js';
 import { walls,cell2pixel, isSpaceFree } from './helpers/grid.js';
-import { moveTowards } from './helpers/moveTowrds.js';
-import { FramIndexPattern } from './frameIndexPatren.js';
 import './style.css'  
-import { STAND_DOWN, STAND_LEFT, STAND_RIGHT, STAND_UP, WALK_DOWN, WALK_LEFT, WALK_RIGHT, WALK_UP } from './object/Hero/heroAnmation.js';
-import { Animations } from './animation.js';
 import { GameOpject } from './object/Hero/gameObject.js';
 import { Hero } from './object/Hero/hero.js';
 import { events } from './Event.js';
@@ -16,13 +11,15 @@ import { Camera } from './camera.js';
 import { Rod } from './object/Hero/rod/rod.js';
 import { Inventory } from './object/Hero/inventory/inventory.js';
 import { Mouse } from './Mouse.js';
-
+import { Vector2 } from './vector2.js';
 import levelData from "./myLevels.json";
 
 
 const canvas = document.querySelector("#game-canvas");
 const ctx =  canvas.getContext("2d");
 const mouse = new Mouse(canvas);
+let tileMousePos =new Vector2();
+let WALL_MODE =true;
 
 const mainScene = new GameOpject({
   position: new Vector2(0,0)
@@ -57,7 +54,25 @@ const inventory = new Inventory();
 
 
 mainScene.input = new Input();
+mainScene.input.spaceAction = () =>{
+    let formatedRedPos = `${redBoxPos.x},${redBoxPos.y}`;
+    if (walls.has(formatedRedPos))
+        walls.delete(formatedRedPos);
+    else 
+       { walls.add(formatedRedPos);}
+        console.warn(JSON.stringify([...walls]));
+};
 
+
+mainScene.input.spaceAction = () => {
+  const formatedPos = `${tileMousePos.x},${tileMousePos.y}`;
+  if (walls.has(formatedPos)) {
+    walls.delete(formatedPos);
+  } else {
+    walls.add(formatedPos);
+  }
+  console.warn(JSON.stringify([...walls]));
+};
 
 
 const update = (delta) => {
@@ -65,22 +80,37 @@ mainScene.stepEntry(delta,mainScene,1)
 };
 
 const draw = () => {
-  ctx.clearRect(0,0,canvas.width ,canvas.height);
- 
-  if(currentShowSky) {
-  skySprite.drawImage(ctx,0,0);}
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
- if(currentUseCamera){ 
-   ctx.save();
-   ctx.translate(camera.position.x ,camera.position.y); 
-   mainScene.draw(ctx,0,0);
-  ctx.restore();}
-  else{
-    mainScene.draw(ctx,0,0)
+  if (currentShowSky) {
+    skySprite.drawImage(ctx, 0, 0);
   }
-   inventory.draw(ctx,0,0);
-}
 
+  ctx.save();
+  if (currentUseCamera) {
+    ctx.translate(camera.position.x, camera.position.y);
+  }
+  mainScene.draw(ctx, 0, 0);
+
+  if (WALL_MODE) {
+
+ //drawing walls  
+    walls.forEach(wall => {
+      const [x, y] = wall.split(",").map(Number);
+      const pos = new Vector2(x, y);
+      pos.draw(ctx, "red", 16);
+    });
+
+//drawing mouse tile position 
+    tileMousePos.x = Math.round((-camera.position.x + mouse.position.x - 8) / 16) * 16;
+    tileMousePos.y = Math.round((-camera.position.y + mouse.position.y - 8) / 16) * 16;
+    tileMousePos.draw(ctx, "yellow", 16);
+  }
+  ctx.restore();
+
+  if (WALL_MODE) { mouse.position.draw(ctx); }
+  inventory.draw(ctx, 0, 0);
+};
 //change lebel------------------- 
  
 let currentLevelName = "ground";
@@ -148,10 +178,10 @@ function loadLevel(levelName) {
             currentObjects.push(newObj);
         });
     }
-    }
+    
 mainScene.addChild(currentLevelObject);
 mainScene.children = [currentLevelObject, ...mainScene.children.filter(c => c !== currentLevelObject)];}
-
+  }
 loadLevel("ground");
 
 events.on("CHANGE_LEVEL_REQUESTED", null, (level) => {
