@@ -15,12 +15,14 @@ import { events } from './Event.js';
 import { Camera } from './camera.js';
 import { Rod } from './object/Hero/rod/rod.js';
 import { Inventory } from './object/Hero/inventory/inventory.js';
+import { Mouse } from './Mouse.js';
 
 import levelData from "./myLevels.json";
 
 
 const canvas = document.querySelector("#game-canvas");
 const ctx =  canvas.getContext("2d");
+const mouse = new Mouse(canvas);
 
 const mainScene = new GameOpject({
   position: new Vector2(0,0)
