@@ -19,3 +19,20 @@ export const cell2pixel = (cell) => {
 export const pixel2cell = (pixel) => {
    return new Vector2(Math.round(pixel.x/16), Math.round(pixel.y/16))
 }
+
+export function getSurroundingTiles(tileStr) {
+  const [x, y] = tileStr.split(",").map(Number);
+  return new Set([
+    `${x},${y}`,
+    `${x - 16},${y - 16}`,
+    `${x},${y - 16}`,
+    `${x + 16},${y - 16}`,
+    `${x - 16},${y}`,
+    `${x + 16},${y}`,
+    `${x - 16},${y + 16}`,
+    `${x},${y + 16}`,
+    `${x + 16},${y + 16}`,
+  ]);
+}
+
+ //console.log(getSurroundingTiles("64,48"));

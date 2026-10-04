@@ -7,6 +7,7 @@ class Resources {
           hero:"/sprites/hero-sheet1.png",
           shadow: "/sprites/shadow.png",
           rod:"/sprites/rod.png",
+          flower:"/sprites/flower.png",
           underground:"/sprites/uerndground1.png",
         };
         this.images = {};

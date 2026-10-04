@@ -25,16 +25,17 @@ export class Input {
             }
           
             if (e.code === "KeyQ") {
-             //console.log("QQQqqq");
              events.emit("CHANGE_LEVEL_REQUESTED",{name :"ground"});
              }
               if (e.code === "KeyE") {
-             //console.log("EEEE");
              events.emit("CHANGE_LEVEL_REQUESTED",{name :"underground"});
              }
               if (e.code === "Space") {
               this.spaceAction();             
              }
+             if (e.code === "KeyC") {
+              events.emit("INTERACTION");
+            }
         });
 
         document.addEventListener("keyup", (e) => {

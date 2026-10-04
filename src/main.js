@@ -2,7 +2,7 @@ import { resources } from './resource';
 import { Sprite } from './spritet';
 import { GameLoop } from './GameLoop';
 import { Input } from './Input.js';
-import { walls,cell2pixel, isSpaceFree } from './helpers/grid.js';
+import { walls,cell2pixel,getSurroundingTiles} from './helpers/grid.js';
 import './style.css'  
 import { GameOpject } from './object/Hero/gameObject.js';
 import { Hero } from './object/Hero/hero.js';
@@ -13,7 +13,7 @@ import { Inventory } from './object/Hero/inventory/inventory.js';
 import { Mouse } from './Mouse.js';
 import { Vector2 } from './vector2.js';
 import levelData from "./myLevels.json";
-
+import { Flower } from './object/Hero/flower.js';
 
 const canvas = document.querySelector("#game-canvas");
 const ctx =  canvas.getContext("2d");
@@ -54,15 +54,6 @@ const inventory = new Inventory();
 
 
 mainScene.input = new Input();
-mainScene.input.spaceAction = () =>{
-    let formatedRedPos = `${redBoxPos.x},${redBoxPos.y}`;
-    if (walls.has(formatedRedPos))
-        walls.delete(formatedRedPos);
-    else 
-       { walls.add(formatedRedPos);}
-        console.warn(JSON.stringify([...walls]));
-};
-
 
 mainScene.input.spaceAction = () => {
   const formatedPos = `${tileMousePos.x},${tileMousePos.y}`;
@@ -105,6 +96,17 @@ const draw = () => {
     tileMousePos.x = Math.round((-camera.position.x + mouse.position.x - 8) / 16) * 16;
     tileMousePos.y = Math.round((-camera.position.y + mouse.position.y - 8) / 16) * 16;
     tileMousePos.draw(ctx, "yellow", 16);
+   ctx.fillStyle = "green";
+   ctx.font = "10px Arial";
+   ctx.fillText(`${tileMousePos.x},${tileMousePos.y}`, tileMousePos.x +15, tileMousePos.y);
+    
+  }
+//messages 
+  if (interaction_func && nearbyPoint) {
+  ctx.fillStyle = "white";
+  ctx.font = "10px Arial";
+  const [px, py] = nearbyPoint.position.split(",").map(Number);
+  ctx.fillText(`Hi ${nearbyPoint.name}`, px, py-10);
   }
   ctx.restore();
 
@@ -118,10 +120,17 @@ let currentLevelObject = null;
 let currentObjects = [];
 let currentShowSky = true;
 let currentUseCamera = true;
-
-
+let interactors = {
+  "rod": () => console.log("rod"),
+  "fish": () => console.log("fish"),
+  "flower": () => console.log("flower")
+};
+let interaction_points = [];
+let interaction_func = null;
+let nearbyPoint = null;
 const objectFactories = {
     rod: (x, y) => new Rod(x, y),
+    flower: (x,y) => new Flower(x,y)
 };
 
 function loadLevel(levelName) {
@@ -157,8 +166,11 @@ function loadLevel(levelName) {
     walls.clear();
     if (levelInfo.walls) {
         levelInfo.walls.forEach(wallCoord => walls.add(wallCoord));
-
-//ADD OBJJJ         
+    }
+    interaction_points = [];   
+    nearbyPoint = null;
+    interaction_func = null;
+//ADD OBJJJ      
     currentObjects.forEach(obj => {
         obj.destroy();
         mainScene.children = mainScene.children.filter(c => c !== obj);
@@ -166,8 +178,16 @@ function loadLevel(levelName) {
     currentObjects = [];
 
     if (levelInfo.objects) {
-        levelInfo.objects.forEach(objData => {
+      levelInfo.objects.forEach(objData => {
             const [ox, oy] = objData.position.split(",").map(Number);
+//add to interaction_points
+     if (interactors[objData.name]) {
+        interaction_points.push({
+        position: objData.position, 
+        action: interactors[objData.name],
+        name: objData.name
+    });
+}
             const factory = objectFactories[objData.name];
             if (!factory) {
                 console.warn(`no object named : ${objData.name}`);
@@ -177,16 +197,32 @@ function loadLevel(levelName) {
             mainScene.addChild(newObj);
             currentObjects.push(newObj);
         });
-    }
-    
+      }   
 mainScene.addChild(currentLevelObject);
-mainScene.children = [currentLevelObject, ...mainScene.children.filter(c => c !== currentLevelObject)];}
-  }
+mainScene.children = [currentLevelObject, ...mainScene.children.filter(c => c !== currentLevelObject)];
+      }
 loadLevel("ground");
 
 events.on("CHANGE_LEVEL_REQUESTED", null, (level) => {
-   currentLevelName=level.name;
-    loadLevel(currentLevelName);
+    loadLevel(level.name);
+});
+
+
+events.on("HERO_POSITION", null, heroPosition => {
+  nearbyPoint = null;
+  interaction_func = null; 
+  const heroTile = `${heroPosition.x},${heroPosition.y}`;
+  const tilesAroundHero =getSurroundingTiles(heroTile);
+  interaction_points.forEach(point => {
+    if (tilesAroundHero.has(point.position)) {
+      nearbyPoint = point;
+      interaction_func = point.action;
+    }
+  });
+});
+
+events.on("INTERACTION", null, () => {
+  if (interaction_func) interaction_func();
 });
 
 //start the game 

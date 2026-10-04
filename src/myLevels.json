@@ -16,7 +16,8 @@
       "160,80"
     ],
          "objects": [
-        { "name": "rod", "position": "112,96" }
+        { "name": "rod", "position": "112,96" },
+        { "name": "flower", "position": "96,64"}
     ]
   },
   "underground": {
