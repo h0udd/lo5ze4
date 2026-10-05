@@ -14,6 +14,14 @@ class Resources {
         Object.keys(this.toload).forEach(key =>{
 
           const img = new Image();
+          
+         const font = new FontFace(
+          "Press Start 2P",
+          "url(/sprites/font/Press_Start_2P/PressStart2P-Regular.ttf)"
+        );
+        this.fontPromise = font.load().then(loadedFont => {
+          document.fonts.add(loadedFont);
+        });
 
           img.src = this.toload[key];
           this.images[key] = {

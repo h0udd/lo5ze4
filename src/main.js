@@ -2,7 +2,7 @@ import { resources } from './resource';
 import { Sprite } from './spritet';
 import { GameLoop } from './GameLoop';
 import { Input } from './Input.js';
-import { walls,cell2pixel,getSurroundingTiles} from './helpers/grid.js';
+import { walls,cell2pixel} from './helpers/grid.js';
 import './style.css'  
 import { GameOpject } from './object/Hero/gameObject.js';
 import { Hero } from './object/Hero/hero.js';
@@ -14,6 +14,8 @@ import { Mouse } from './Mouse.js';
 import { Vector2 } from './vector2.js';
 import levelData from "./myLevels.json";
 import { Flower } from './object/Hero/flower.js';
+import { InteractionSystem } from './Interaction.js';
+import { drawInteractionMessage } from './interactionMessage.js';
 
 const canvas = document.querySelector("#game-canvas");
 const ctx =  canvas.getContext("2d");
@@ -30,7 +32,6 @@ const skySprite = new Sprite({
   frameSize:new Vector2(320, 180),
 })
 
-//mainScene.addChild(skySprite);
 
 const graundSprite = new Sprite({
   resource:resources.images.ground,
@@ -44,15 +45,8 @@ mainScene.addChild(hero);
 
 const camera = new Camera();
 mainScene.addChild(camera);
-
-
-//const rod = new Rod(gridCalls(7),gridCalls(6));
-//mainScene.addChild(rod);
-
-
 const inventory = new Inventory();
-
-
+const interaction = new InteractionSystem();
 mainScene.input = new Input();
 
 mainScene.input.spaceAction = () => {
@@ -96,18 +90,13 @@ const draw = () => {
     tileMousePos.x = Math.round((-camera.position.x + mouse.position.x - 8) / 16) * 16;
     tileMousePos.y = Math.round((-camera.position.y + mouse.position.y - 8) / 16) * 16;
     tileMousePos.draw(ctx, "yellow", 16);
-   ctx.fillStyle = "green";
-   ctx.font = "10px Arial";
+   ctx.fillStyle = "black";
+   ctx.font = "8px 'Press Start 2P', monospace";
    ctx.fillText(`${tileMousePos.x},${tileMousePos.y}`, tileMousePos.x +15, tileMousePos.y);
     
   }
 //messages 
-  if (interaction_func && nearbyPoint) {
-  ctx.fillStyle = "white";
-  ctx.font = "10px Arial";
-  const [px, py] = nearbyPoint.position.split(",").map(Number);
-  ctx.fillText(`Hi ${nearbyPoint.name}`, px, py-10);
-  }
+drawInteractionMessage(ctx,interaction.nearbyPoint)
   ctx.restore();
 
   if (WALL_MODE) { mouse.position.draw(ctx); }
@@ -120,14 +109,7 @@ let currentLevelObject = null;
 let currentObjects = [];
 let currentShowSky = true;
 let currentUseCamera = true;
-let interactors = {
-  "rod": () => console.log("rod"),
-  "fish": () => console.log("fish"),
-  "flower": () => console.log("flower")
-};
-let interaction_points = [];
-let interaction_func = null;
-let nearbyPoint = null;
+
 const objectFactories = {
     rod: (x, y) => new Rod(x, y),
     flower: (x,y) => new Flower(x,y)
@@ -167,9 +149,7 @@ function loadLevel(levelName) {
     if (levelInfo.walls) {
         levelInfo.walls.forEach(wallCoord => walls.add(wallCoord));
     }
-    interaction_points = [];   
-    nearbyPoint = null;
-    interaction_func = null;
+    interaction.reset(); 
 //ADD OBJJJ      
     currentObjects.forEach(obj => {
         obj.destroy();
@@ -180,14 +160,7 @@ function loadLevel(levelName) {
     if (levelInfo.objects) {
       levelInfo.objects.forEach(objData => {
             const [ox, oy] = objData.position.split(",").map(Number);
-//add to interaction_points
-     if (interactors[objData.name]) {
-        interaction_points.push({
-        position: objData.position, 
-        action: interactors[objData.name],
-        name: objData.name
-    });
-}
+            interaction.addPoint(objData.name ,objData.position);
             const factory = objectFactories[objData.name];
             if (!factory) {
                 console.warn(`no object named : ${objData.name}`);
@@ -207,24 +180,8 @@ events.on("CHANGE_LEVEL_REQUESTED", null, (level) => {
     loadLevel(level.name);
 });
 
-
-events.on("HERO_POSITION", null, heroPosition => {
-  nearbyPoint = null;
-  interaction_func = null; 
-  const heroTile = `${heroPosition.x},${heroPosition.y}`;
-  const tilesAroundHero =getSurroundingTiles(heroTile);
-  interaction_points.forEach(point => {
-    if (tilesAroundHero.has(point.position)) {
-      nearbyPoint = point;
-      interaction_func = point.action;
-    }
-  });
-});
-
-events.on("INTERACTION", null, () => {
-  if (interaction_func) interaction_func();
-});
-
 //start the game 
 const gameLoop = new GameLoop(update , draw);
+resources.fontPromise.then(()=>{ 
 gameLoop.start();
+});
