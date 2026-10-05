@@ -19,7 +19,7 @@ export class Inventory extends GameOpject{
       this.nextId +=1;  
       this.items.push({ 
       id : this.nextId,
-      image :resources.images.rod
+      image : data.image
 
       })
       this.renderInventory();
