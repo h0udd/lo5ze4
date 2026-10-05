@@ -11,9 +11,9 @@ constructor(x,y){
         position:new Vector2(x,y)
     });
 
-
+    this.img = resources.images.rod;
     const sprite = new Sprite({
-        resource: resources.images.rod,
+        resource: this.img,
         position: new Vector2(0 ,-5) 
     })
 
@@ -36,7 +36,7 @@ onCallideWithHero(){
 this.destroy();
 
 events.emit("HERO_PICKS_UP_ITEM",{
-    image :resources.images.rod,
+    image :this.img,
     position : this.position
 })
 }
