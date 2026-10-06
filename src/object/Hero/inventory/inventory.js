@@ -16,6 +16,7 @@ export class Inventory extends GameOpject{
         ]
 
      events.on("HERO_PICKS_UP_ITEM",this , data =>{
+          console.log("pickup data:",  data.image.image.src);
       this.nextId +=1;  
       this.items.push({ 
       id : this.nextId,
