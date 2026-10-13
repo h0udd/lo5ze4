@@ -73,7 +73,7 @@ drawInteractionMessage(ctx,interaction.nearbyPoint)
 
 const game = { mainScene, hero, interaction };
 
-loadLevel("ground", game);
+loadLevel("ground_1", game);
 
 events.on("CHANGE_LEVEL_REQUESTED", null, (level) => {
     loadLevel(level.name, game);

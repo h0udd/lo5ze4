@@ -3,12 +3,12 @@ class Resources {
     constructor(){
         this.toload ={
           sky: "/sprites/sky.png",
-          ground:"/sprites/ground.png",
+          ground_1:"/sprites/ground_1.png",
           hero:"/sprites/hero-sheet1.png",
           shadow: "/sprites/shadow.png",
           rod:"/sprites/rod.png",
           flower:"/sprites/flower.png",
-          underground:"/sprites/uerndground1.png",
+          underground_1:"/sprites/underground_1.png",
         };
         this.images = {};
         Object.keys(this.toload).forEach(key =>{

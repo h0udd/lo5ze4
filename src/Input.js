@@ -25,10 +25,10 @@ export class Input {
             }
           
             if (e.code === "KeyQ") {
-             events.emit("CHANGE_LEVEL_REQUESTED",{name :"ground"});
+             events.emit("CHANGE_LEVEL_REQUESTED",{name :"ground_1"});
              }
               if (e.code === "KeyE") {
-             events.emit("CHANGE_LEVEL_REQUESTED",{name :"underground"});
+             events.emit("CHANGE_LEVEL_REQUESTED",{name :"underground_1"});
              }
               if (e.code === "Space") {
               this.spaceAction();             
