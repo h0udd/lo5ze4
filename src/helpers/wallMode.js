@@ -9,6 +9,11 @@ let WALL_MODE = true;
 export function initWallsMode(canvas, mainScene) {
   mouse = new Mouse(canvas);
 
+    mainScene.input.zeroAction = () => {
+    WALL_MODE = !WALL_MODE;
+  };
+
+  if (!WALL_MODE) return; 
   mainScene.input.spaceAction = () => {
     const formatedPos = `${tileMousePos.x},${tileMousePos.y}`;
     if (walls.has(formatedPos)) {

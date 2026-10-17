@@ -9,6 +9,7 @@ export class Input {
     constructor() {
         this.heldDirections = [];
         this.spaceAction =() => {console.log("space!")};
+        this.zeroAction = () => { console.log("zero!") };
 
         document.addEventListener("keydown", (e) => {
             if (e.code === "ArrowUp" || e.code === "KeyW") {
@@ -36,6 +37,9 @@ export class Input {
              if (e.code === "KeyC") {
               events.emit("INTERACTION");
             }
+           if (e.code === "Digit0" || e.code === "Numpad0") {
+             this.zeroAction();
+           }
         });
 
         document.addEventListener("keyup", (e) => {
