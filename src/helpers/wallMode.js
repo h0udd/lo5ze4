@@ -4,7 +4,7 @@ import { Vector2 } from '../vector2.js';
 
 let mouse = null;
 let tileMousePos = new Vector2();
-let WALL_MODE = true;
+export let WALL_MODE = true;
 
 export function initWallsMode(canvas, mainScene) {
   mouse = new Mouse(canvas);

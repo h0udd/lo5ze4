@@ -7,6 +7,7 @@ import { Flower } from '../object/Hero/flower.js';
 import { Vector2 } from "../vector2";
 import levelData from "../myLevels.json";
 import { Monster } from '../object/Hero/monster.js';
+import { Portal } from "../Portal.js";
 
 let currentLevelName = "ground";
 let currentLevelObject = null;
@@ -18,6 +19,7 @@ const objectFactories = {
     rod: (x, y) => new Rod(x, y),
     flower: (x,y) => new Flower(x,y),
     monster: (x,y) => new Monster(x,y),
+    portal: (x,y, tiles, destination) => new Portal(x, y, tiles, destination),
 };
 
 export function loadLevel(levelName, { mainScene, hero, interaction }) {
@@ -70,14 +72,20 @@ export function loadLevel(levelName, { mainScene, hero, interaction }) {
             const factory = objectFactories[objData.name];
             if (!factory) {
                 if (objData.nama == "well") interaction.addPoint(objData.name, objData.position);
+
                 else {
                     console.warn(`no object named : ${objData.name}`); 
                     return;
               }
             }
-            const newObj = factory(ox, oy);
-            mainScene.addChild(newObj);
-            currentObjects.push(newObj);
+           if (objData.name == "portal") 
+          mainScene.addChild(factory(ox, oy, 
+              objData.tiles.map(t => (new Vector2(...t.split(",").map(Number)))), objData.destination));
+           else {
+              const newObj = factory(ox, oy);
+              mainScene.addChild(newObj);
+              currentObjects.push(newObj);
+            }
         });
       }   
 mainScene.addChild(currentLevelObject);
