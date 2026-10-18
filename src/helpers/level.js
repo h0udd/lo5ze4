@@ -17,7 +17,7 @@ export let currentUseCamera = true;
 const objectFactories = {
     rod: (x, y) => new Rod(x, y),
     flower: (x,y) => new Flower(x,y),
-    monster: (x,y) => new Monster(x,y)
+    monster: (x,y) => new Monster(x,y),
 };
 
 export function loadLevel(levelName, { mainScene, hero, interaction }) {
@@ -69,8 +69,11 @@ export function loadLevel(levelName, { mainScene, hero, interaction }) {
             interaction.addPoint(objData.name ,objData.position);
             const factory = objectFactories[objData.name];
             if (!factory) {
-                console.warn(`no object named : ${objData.name}`);
-                return;
+                if (objData.nama == "well") interaction.addPoint(objData.name, objData.position);
+                else {
+                    console.warn(`no object named : ${objData.name}`); 
+                    return;
+              }
             }
             const newObj = factory(ox, oy);
             mainScene.addChild(newObj);

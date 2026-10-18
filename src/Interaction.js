@@ -5,6 +5,7 @@ const interactors = {
   "rod":() => console.log("rod"),
   "fish": () => console.log("Fish"),
   "flower":() => console.log("Flower"),
+  "well": () => events.emit("CHANGE_LEVEL_REQUESTED",{name :"underground_1"}), // TODO: add some effects before the teleport happens
 };
 
 export class InteractionSystem {
@@ -19,7 +20,7 @@ export class InteractionSystem {
       const heroTile = `${heroPosition.x},${heroPosition.y}`;
       const tilesAroundHero = getSurroundingTiles(heroTile);
 
-      this.interaction_points.forEach(point => {
+      this.interaction_points.forEach(point => {     // a point has a name:str, position:Vector2, action:func
         if (tilesAroundHero.has(point.position)) {
           this.nearbyPoint = point;
           this.interaction_func = point.action;
