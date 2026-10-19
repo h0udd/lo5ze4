@@ -31,6 +31,7 @@ export class Input {
               if (e.code === "KeyE") {
              events.emit("CHANGE_LEVEL_REQUESTED",{name :"underground_1"});
              }
+            
               if (e.code === "Space") {
               this.spaceAction();             
              }

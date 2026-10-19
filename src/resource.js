@@ -10,6 +10,7 @@ class Resources {
           rod:"/sprites/rod.png",
           flower:"/sprites/flower.png",
           underground_1:"/sprites/underground_1.png",
+          underground_2:"/sprites/underground_2.png"
         };
         this.images = {};
         Object.keys(this.toload).forEach(key =>{
