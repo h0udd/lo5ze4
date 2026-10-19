@@ -4,7 +4,8 @@ class Resources {
         this.toload ={
           sky: "/sprites/sky.png",
           ground_1:"/sprites/ground_1.png",
-          hero:"/sprites/slime-zombie.png",
+          hero:"/sprites/hero-sheet1.png",
+          monster :"/sprites/slime-zombie.png",
           shadow: "/sprites/shadow.png",
           rod:"/sprites/rod.png",
           flower:"/sprites/flower.png",

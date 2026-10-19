@@ -6,6 +6,7 @@ import { Rod } from '../object/Hero/rod/rod.js';
 import { Flower } from '../object/Hero/flower.js';
 import { Vector2 } from "../vector2";
 import levelData from "../myLevels.json";
+import { Monster } from '../object/Hero/monster.js';
 
 let currentLevelName = "ground";
 let currentLevelObject = null;
@@ -15,7 +16,8 @@ export let currentUseCamera = true;
 
 const objectFactories = {
     rod: (x, y) => new Rod(x, y),
-    flower: (x,y) => new Flower(x,y)
+    flower: (x,y) => new Flower(x,y),
+    monster: (x,y) => new Monster(x,y)
 };
 
 export function loadLevel(levelName, { mainScene, hero, interaction }) {
